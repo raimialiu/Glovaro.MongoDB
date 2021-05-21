@@ -1,0 +1,105 @@
+const mongoose = require("mongoose")
+function GlovaroDB(connectionString, options={}) {
+    let models = []
+    Open((er)=>{
+        if(er)
+        {
+            throw new Error(er)
+        }
+    })
+
+    function Open(cb) {
+        if(!connectionString)
+        {
+            throw new Error("undefined connection string")
+        }
+        mongoose.connect(connectionString, options, (er)=>{
+            if(er) {
+                cb(er)
+            }
+        })
+
+        const db = mongoose.connection
+
+        return db
+    }
+
+    function CreateModel(ModelName, properties) {
+        var schema = new mongoose.Schema(properties)
+
+        return mongoose.model(ModelName, schema)
+    }
+
+    function Add(model) {
+        models.push(model)
+
+        return this
+    }
+
+    async function SaveChangesAsync() {
+        
+        for(let k of models) 
+        {
+            const res = await k.save()
+
+            if(res._id == null) {
+                return false;
+            }
+        }
+        models = [];
+        return true
+    }
+
+    async function FirstOrDefaultAsync(ModelName, query) {
+        const vl = await ModelName.find(query)
+
+        return vl != null ? vl[0] : null
+    }
+
+    async function TopTen(ModelName){
+        return await ModelName.find().skip(0).limit(10).exec()
+    }
+    async function FindById(ModelName, id) {
+        return ModelName.find({_id:id})
+    }
+    async function Count(ModelName, query=null) {
+        if(query == null) {
+            return await ModelName.countDocuments();
+        }
+
+        if(ModelName == null)
+            throw new Exception("null input")
+
+        var res = await ModelName.find(query)
+        return res.length
+    }
+
+    async function QueryAsync(ModelName, query) {
+        return ModelName.find(query)
+    }
+
+    async function PaginatedQuery(ModelName, query, pageIndex=1, PageSize=500) {
+        return ModelName.find(query).skip((pageIndex-1)*PageSize).limit(PageSize)
+    }
+
+    function CreateAndSave(ModelName, properties, PropValues, cb) {
+        var SchemaProp = new mongoose.Schema(properties)
+        var model = mongoose.Model(ModelName, SchemaProp)
+
+        var modelToSave = new SchemaProp(PropValues)
+
+        modelToSave.save().then(res=>cb(null, res)).catch(er=>cb(er,null))
+    }
+
+    return {
+        FindById,
+        TopTen,
+        QueryAsync,
+        Count,
+        PaginatedQuery,
+        CreateAndSave, CreateModel, Add, SaveChangesAsync,FirstOrDefaultAsync
+    }
+
+}
+
+module.exports = GlovaroDB
