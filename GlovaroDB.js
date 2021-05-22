@@ -1,12 +1,17 @@
 const mongoose = require("mongoose")
-function GlovaroDB(connectionString, options={}) {
+function GlovaroDB(connectionString, options={autoConnect:true, useUnifiedTopology:true, 
+                        useNewUriParser:true}) {
     let models = []
-    Open((er)=>{
-        if(er)
-        {
-            throw new Error(er)
-        }
-    })
+    let _cb =  null
+    if(options.autoConnect) {
+       _cb = Open((er)=>{
+            if(er)
+            {
+                throw new Error(er)
+            }
+        })
+    }
+   
 
     function Open(cb) {
         if(!connectionString)
@@ -15,13 +20,13 @@ function GlovaroDB(connectionString, options={}) {
         }
         mongoose.connect(connectionString, options, (er)=>{
             if(er) {
-                cb(er)
+                cb(er,null)
             }
         })
 
         const db = mongoose.connection
-
-        return db
+        _cb = db
+        cb(null,db)
     }
 
     function CreateModel(ModelName, properties) {
@@ -93,6 +98,7 @@ function GlovaroDB(connectionString, options={}) {
 
     return {
         FindById,
+        Open,
         TopTen,
         QueryAsync,
         Count,
