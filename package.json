@@ -1,13 +1,13 @@
 {
-  "name": "Glovaro.Mongo.Service",
+  "name": "glovaro-mongo",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tap"
   },
   "keywords": [],
-  "author": "",
+  "author": "glovarohq@gmail.com",
   "license": "ISC",
   "dependencies": {
     "mongoose": "^5.12.9"

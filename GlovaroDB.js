@@ -41,6 +41,11 @@ function GlovaroDB(connectionString, options={autoConnect:true, useUnifiedTopolo
         return this
     }
 
+    async function Save(doc) {
+        const result = await doc.save()
+        return result._id != null ? result._id : null
+    }
+
     async function SaveChangesAsync() {
         
         for(let k of models) 
@@ -68,12 +73,14 @@ function GlovaroDB(connectionString, options={autoConnect:true, useUnifiedTopolo
         return ModelName.find({_id:id})
     }
     async function Count(ModelName, query=null) {
+
+        if(ModelName == null){
+            throw new Exception("null input")
+        }
+            
         if(query == null) {
             return await ModelName.countDocuments();
         }
-
-        if(ModelName == null)
-            throw new Exception("null input")
 
         var res = await ModelName.find(query)
         return res.length
@@ -84,7 +91,7 @@ function GlovaroDB(connectionString, options={autoConnect:true, useUnifiedTopolo
     }
 
     async function PaginatedQuery(ModelName, query, pageIndex=1, PageSize=500) {
-        return ModelName.find(query).skip((pageIndex-1)*PageSize).limit(PageSize)
+        return await ModelName.find(query).skip((pageIndex-1)*PageSize).limit(PageSize).exec()
     }
 
     function CreateAndSave(ModelName, properties, PropValues, cb) {
@@ -102,6 +109,7 @@ function GlovaroDB(connectionString, options={autoConnect:true, useUnifiedTopolo
         TopTen,
         QueryAsync,
         Count,
+        Save,
         PaginatedQuery,
         CreateAndSave, CreateModel, Add, SaveChangesAsync,FirstOrDefaultAsync
     }

@@ -20,18 +20,24 @@ const model = db.CreateModel("User", {
 const res = new model({FirstName:"olatunde", LastName:"kehinde", City:"Lagos"})
 const res2 = new model({FirstName:"Akintunde", LastName:"Pero", City:"Niger"}) 
 
-const sc = new SchemaWriter()
-sc.Define({FirstName:String}).Add("IsAdmin", Boolean).Add("FirstTimeLogin", Boolean)
-const md = sc.ToModel('Admin')
+db.Add(res)
+db.Add(res2)
+db.SaveChangesAsync().then(res=>console.log(res)).catch(er=>console.log(er))
 
-const adminOne = new md({FirstName:'Tunde', "IsAdmin":true, "FirstTimeLogin":true})
-//db.Add(adminOne)
+// console.log(db.Save(res))
 
-//db.SaveChangesAsync().then(res=>console.log(res)).catch(er=>console.log(er))
+// const sc = new SchemaWriter()
+// sc.Define({FirstName:String}).Add("IsAdmin", Boolean).Add("FirstTimeLogin", Boolean)
+// const md = sc.ToModel('Admin')
 
-//sc.Define({FirstName:String}).Add(LastName, String)
+// const adminOne = new md({FirstName:'Tunde', "IsAdmin":true, "FirstTimeLogin":true})
+// //db.Add(adminOne)
 
-db.Count(md).then(res=>console.log(res)).catch(er=>console.log(er))
+// //db.SaveChangesAsync().then(res=>console.log(res)).catch(er=>console.log(er))
+
+// //sc.Define({FirstName:String}).Add(LastName, String)
+
+// db.Count(md).then(res=>console.log(res)).catch(er=>console.log(er))
 
 //db.Add(res)
 //db.Add(res2)
