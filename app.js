@@ -17,13 +17,24 @@ const model = db.CreateModel("User", {
 })
 
 
+
 const res = new model({FirstName:"olatunde", LastName:"kehinde", City:"Lagos"})
 const res2 = new model({FirstName:"Akintunde", LastName:"Pero", City:"Niger"}) 
 
-db.Add(res)
-db.Add(res2)
-db.SaveChangesAsync().then(res=>console.log(res)).catch(er=>console.log(er))
+// res.UpdateOne()
+// db.Add(res)
+// db.Add(res2)
+// db.SaveChangesAsync().then(res=>console.log(res)).catch(er=>console.log(er))
 
+
+// db.Select(model, {FirstName:'olatunde'}, ['City', 'LastName'],(er, data)=>{
+//     console.log(data)
+// })
+
+db.QueryAsync(model, {City:'Lagos'}).then(r=>console.log(r)).catch(er=>console.log(er))
+
+//res.LastName = "ALIU"
+//db.Update(res).then(r=>console.log(r))
 // console.log(db.Save(res))
 
 // const sc = new SchemaWriter()
